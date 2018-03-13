@@ -1,0 +1,32 @@
+body {
+  background-color: gray;
+}
+.ubuntu-font {
+  font-family: 'Ubuntu', sans-serif;
+}
+.outter-well { 
+  margin: 0px 50px 0px 50px;
+  border-color: #111;
+  background-color: #AAA;
+}
+.button-new {
+  font-size: 28px;
+  border-color: black;
+  border-radius: 15px;
+  background-color: #444;
+  color: white;
+  box-shadow: 0 5px 0 0 #111;
+}
+
+.button-new:visited {
+  color: white;
+}
+.button-new:hover {
+  background-color:#EEE;
+  color:#111;
+}
+.button-new:active {
+  box-shadow: none;
+  margin-bottom: -5px;
+  margin-top: 5px;
+}
