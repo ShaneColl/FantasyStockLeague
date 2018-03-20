@@ -1,29 +1,40 @@
+
 body {
-  background-color: gray;
+  background-color: white;
+}
+p {
+  color:#404F53;
 }
 .ubuntu-font {
   font-family: 'Ubuntu', sans-serif;
 }
+.funkyfont {
+  color: #4DC5D6;
+  text-shadow: 0 5px gray;
+}
 .outter-well { 
-  margin: 0px 50px 0px 50px;
-  border-color: #111;
-  background-color: #AAA;
+  margin: 10% 50px 10% 50px;
+  border-color: gray;
+  background-color: #E4F6F8;
+  min-height: inherit;
+  height: inherit;
+  padding-bottom: 50px;
 }
 .button-new {
-  font-size: 28px;
-  border-color: black;
+  
+  border-color: none;
   border-radius: 15px;
-  background-color: #444;
+  background-color: #4DC5D6;
   color: white;
-  box-shadow: 0 5px 0 0 #111;
+  box-shadow: 0 5px 0 0 gray;
 }
-
 .button-new:visited {
   color: white;
 }
 .button-new:hover {
-  background-color:#EEE;
-  color:#111;
+  background-color:#90D3e7;
+  box-shadow: 0 5px #739098;
+  color:#404F53;
 }
 .button-new:active {
   box-shadow: none;
