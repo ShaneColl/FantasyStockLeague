@@ -31,6 +31,7 @@
 								<th>Company</th>
 								<th>Value</th>
 								<th>Total Value</th>
+								<th>Total Amount</th>
 								<th>Increments</th>
 							</tr>
 						</thead>
@@ -80,67 +81,79 @@
 
 
 		<script>
-		var table_rows = []
+		var table_rows = [];
 		$(document).ready( function () {
 			$('#main_table').DataTable();
 
-			// <?php
-			// $mysqli = mysqli_connect("localhost", "fsledcxs", "@rka54yM9&0i", "fsledcxs_main");
-			// if (mysqli_connect_errno())
-			//   {
-			//   echo "Failed to connect to MySQL: " . mysqli_connect_error();
-			//   }
-			// $player_Email = "fakeemail@email.com";
-			// $GM_Email = "ddd@test.com";
-			// $session_name = "tester_game";
-			// $querystring = "SELECT * FROM session_data WHERE owner = '" . $player_Email . "' and email_GM = '" . $GM_Email . "' and session_name = '" . $session_name . "'";
-			// $result = $mysqli->query($querystring);
-			// if (!$result) {
-			// 	echo 'Could not run query: ' . mysqli_error();
-			// }
-			// while( $row = mysqli_fetch_assoc($result)) {
-			// 	?>
-			// 	var Tstockticker = "<?php echo $row['stock_ticker'] ?>";
-			// 	var Tprice = "<?php echo $row['price'] ?>";
-			// 	var Tnumber = "<?php echo $row['number'] ?>";
-			// 	var entry = {company: Tstockticker, price: Tprice, number: Tnumber};
-			// 	table_rows.push(entry);
-			// 	<?php
-			// }
-			// mysqli_close($mysqli);
-			// ?>
-			// var arrayLength = table_rows.length;
-			// for (var i = 0; i < arrayLength; i++) {
-			// 	var outsideObj = (table_rows[i]);
-			// 	var outsideCompany = outsideObj.company;
-			// 	var total_number = outsideObj.number;
-			// 	for (var j = 0; j < arrayLength; j++){
-			// 		var insideObj = (table_rows[j]);
-			// 		var insideCompany = insideObj.company;
-			// 		if (j != i && outsideCompany == insideCompany){ //don't want to count same company stock purchase/sell twice
-			// 			total_number += insideObj.number;
-			// 		}
-			// 	}
-			// 	if (total_number > 0){
-			// 		var finalObj = {company: outsideCompany, price: outsideObj.price, number: total_number}; //price is wrong. need to grab current price from API
-			// 		PopulateTable(finalObj);
-			// 	}
-			// }
+			<?php
+			 $mysqli = mysqli_connect("localhost", "fsledcxs", "@rka54yM9&0i", "fsledcxs_main");
+			 if (mysqli_connect_errno())
+			   {
+			   echo "Failed to connect to MySQL: " . mysqli_connect_error();
+			   }
+			 $player_Email = "fakeemail@email.com";
+			 $GM_Email = "ddd@test.com";
+			 $session_name = "tester_game";
+			 $querystring = "SELECT * FROM session_data WHERE owner = '" . $player_Email . "' and email_GM = '" . $GM_Email . "' and session_name = '" . $session_name . "'";
+			 $result = $mysqli->query($querystring);
+			 if (!$result) {
+			 	echo 'Could not run query: ' . mysqli_error();
+			 }
+			 while( $row = mysqli_fetch_assoc($result)) {
+			 	?>
+			 	var Tstockticker = "<?php echo $row['stock_ticker'] ?>";
+			 	var Tprice = "<?php echo $row['price'] ?>";
+			 	var Tnumber = "<?php echo $row['number'] ?>";
+			 	var entry = {company: Tstockticker, price: Tprice, number: Tnumber};
+			 	table_rows.push(entry);
+			 	<?php
+			 }
+			 mysqli_close($mysqli);
+			 ?>
+			 var arrayLength = table_rows.length;
+			 var companyList = [];
+			 for (var i = 0; i < arrayLength; i++) {
+			 	var outsideObj = (table_rows[i]);
+			 	var outsideCompany = outsideObj.company;
+				var repeat = false;
+				for (var x = 0; x < companyList.length; x++){
+					if (companyList[x] == outsideCompany){
+					repeat = true;
+					}
+				}
+				if (repeat == false){
+					var total_number = parseInt(outsideObj.number);
+					for (var j = 0; j < arrayLength; j++){
+						var insideObj = (table_rows[j]);
+						var insideCompany = insideObj.company;
+						if (j != i && outsideCompany == insideCompany){ //don't want to count same company stock purchase/sell twice
+							total_number += parseInt(insideObj.number);
+						}
+					}
+					if (total_number > 0){
+						var finalObj = {company: outsideCompany, price: outsideObj.price, number: total_number}; 
+						PopulateTable(finalObj);
+						companyList.push(outsideCompany);
+					}
+				}
+			 }
 		} );
 
 		//PUT LOGIC FOR API IN THIS FUNCTION. THIS IS FOR CREATING NEW ROWS. Need current price from API.
 		function PopulateTable(obj){
 				var rowData = [];
 				var table = $('#main_table').DataTable();
-				var db_data1 = obj.company //stock ticker name
-				var db_data2 = "$"+obj.price //current individual stock value
-				var db_data3 = "$"+(parseInt(obj.number) * parseFloat(obj.price)); //total value
+				var db_data1 = obj.company; //stock ticker name
+				var db_data2 = "$"+Number.parseFloat(obj.price).toFixed(2); //current individual stock value
+				var db_data3 = (parseInt(obj.number) * parseFloat(obj.price)); //total value
+				db_data3 = "$"+Number.parseFloat(db_data3).toFixed(2);
 				var db_data4 = obj.number; //this is the amount of stock currently owned by player. set to 0 if no stock owned
 				rowData.push('<button type="button" class="dt-delete"> Delete</button>');
 				rowData.push('<p id="stock_ticker">'+ db_data1 +'</p>');
 				rowData.push('<p id="value">'+ db_data2 +'</p>');
 				rowData.push('<p id="total_value">'+ db_data3 +'</p>');
-				rowData.push(   ' <input id="amount" type="text" value="'+db_data4+'" size="10"/>'+
+				rowData.push('<p id="total_amount">'+ db_data4 +'</p>');
+				rowData.push(   ' <input id="amount" type="text" value="0" size="10"/>'+
 								'<button id="up" class="up_button" size="2" >+</button>'+
 								'<button id="down" class="down_button" size="2">-</button>');
 				table.row.add(rowData).draw( false );
@@ -188,26 +201,25 @@
 		$('#main_table').on('click', ".up_button", function(evt){
 			$(this).parents('tr').children().children('#amount').val(parseInt($(this).parents('tr').children().children('#amount').val())+1);
 			var amount = $(this).parents('tr').children().children('#amount').val();
+			var total_amount = $(this).parents('tr').children().children('#total_amount').text();
 			var price = $(this).parents('tr').children().children('#value').text().substring(1,$(this).parents('tr').children().children('#value').text().length);
-			console.log(price);
-
-			// price = Math.round10(price, -2);
-			// console.log(price);
-			var val = parseInt(amount)*parseFloat(price);
+			var val = (parseInt(amount)+parseInt(total_amount))*parseFloat(price);
 			val = (val).toFixed(2);
-			//val = parseFloat(val);
-			console.log(val);
-			//$(this).parents('tr').children().children('#total_value').text("$"+parseInt(amount)*parseFloat(price));
 			$(this).parents('tr').children().children('#total_value').text("$"+val);
 		});
 
 		$('#main_table').on('click', ".down_button", function(evt){
-			$(this).parents('tr').children().children('#amount').val(parseInt($(this).parents('tr').children().children('#amount').val())-1);
 			var amount = $(this).parents('tr').children().children('#amount').val();
-			var price = $(this).parents('tr').children().children('#value').text().substring(1,$(this).parents('tr').children().children('#value').text().length);
-			var val = parseInt(amount)*parseFloat(price);
-			val = (val).toFixed(2);
-			$(this).parents('tr').children().children('#total_value').text("$"+val);
+			var total_amount = $(this).parents('tr').children().children('#total_amount').text();
+			if ((parseInt(total_amount) + parseInt(amount)-1) >= 0){
+				$(this).parents('tr').children().children('#amount').val(parseInt($(this).parents('tr').children().children('#amount').val())-1);
+				amount = $(this).parents('tr').children().children('#amount').val();
+				total_amount = $(this).parents('tr').children().children('#total_amount').text();
+				var price = $(this).parents('tr').children().children('#value').text().substring(1,$(this).parents('tr').children().children('#value').text().length);
+				var val = (parseInt(amount)+parseInt(total_amount))*parseFloat(price);
+				val = (val).toFixed(2);
+				$(this).parents('tr').children().children('#total_value').text("$"+val);
+			}
 		});
 
 		$('#num1').on('click', ".transaction", function(evt){
@@ -215,17 +227,34 @@
 			var row = table.children('tbody');
 			row.children().each(function () {
 				var ticker = $(this).children().children('#stock_ticker').text();
-				var value = $(this).children().children('#value').text();
+				var value = $(this).children().children('#value').text().substring(1,$(this).children().children('#value').text().length);
 				var total_value = $(this).children().children('#total_value').text();
 				var amount = $(this).children().children('#amount').val();
-				alert(amount);
-				alert(ticker);
-
-				$.ajax({
-				  type: 'POST',
-				  url: 'buy_sell_dbInsert.php',
-				  data: {'ticker': ticker, 'value': value, 'total_value': total_value, 'amount': amount},
-				});
+				var total_amount = $(this).children().children('#total_amount').text();
+				if ((parseInt(amount) > 0 || parseInt(amount) < 0) && (parseInt(total_amount)+parseInt(amount)) >= 0){ 
+					$.ajax({
+					  type: 'POST',
+					  url: 'buy_sell_dbInsert.php',
+					  data: {'ticker': ticker, 'value': value, 'total_value': total_value, 'amount': amount},
+					});
+					if ((parseInt(total_amount)+parseInt(amount)) == 0){
+						var tablex = $('#main_table').DataTable();
+						tablex.row($(this)).remove().draw( false );
+					}
+					else{
+						total_amount = parseInt(total_amount)+parseInt(amount);
+						$(this).children().children('#total_amount').text(total_amount);
+						var val = (parseInt(total_amount)*parseFloat(value)).toFixed(2);
+						$(this).children().children('#total_value').text("$"+val);
+						$(this).children().children('#amount').val(0);
+					}
+				}
+				else{
+					if (parseInt(total_amount) == 0){
+						var tablex = $('#main_table').DataTable();
+						tablex.row($(this)).remove().draw( false );
+					}
+				}
 			});
 		});
 
