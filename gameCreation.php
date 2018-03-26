@@ -16,6 +16,7 @@
 
 <body>
 <?php
+	session_start();
 	if(empty($_GET["email"]) || empty($_GET["password"])){
 		echo '
 			<link href="https://fonts.googleapis.com/css?family=Ubuntu" rel="stylesheet">
@@ -32,11 +33,11 @@
 				<div class="row">
 
 				  <a class="btn btn-lg button-new col-xs-5 col-md-3" href="loadgame.html">Back</a>
-				
+
 
 				  <a class="btn btn-lg button-new col-xs-5 col-xs-offset-2 col-md-3 col-md-offset-6" href="index.html">Main Menu</a>
-				
-				
+
+
 				</div>
 			     </div>
 			  </div>';
@@ -46,11 +47,12 @@
 		if (mysqli_connect_errno()){
 			echo "Failed to connect to MySQL: " . mysqli_connect_error();
 		}
-		
+
 		$email = $_GET["email"];
+		$_SESSION['email'] = $email;
 		$pw = $_GET["password"];
 		$row = mysqli_fetch_array(mysqli_query($mysqli, "SELECT * FROM `account` WHERE email = '$email'"));
-		
+
 		if($row['email'] != $email){
 			echo '
 				<link href="https://fonts.googleapis.com/css?family=Ubuntu" rel="stylesheet">
@@ -65,17 +67,17 @@
 					  </form>
 					<br></br><br></br>
 					<div class="row">
-					
+
 					  <a class="btn btn-lg button-new col-xs-5 col-md-3 col-md-offset-6" href="loadgame.html">Back</a>
-					
-					
+
+
 					  <a class="btn btn-lg button-new col-xs-5 col-xs-offset-2 col-md-3 col-md-offset-6" href="index.html">Main Menu</a>
-					
+
 					</div>
 				     </div>
 				  </div>';
 		}
-		
+
 		else if($row['pw'] != $pw){
 			echo '
 				<link href="https://fonts.googleapis.com/css?family=Ubuntu" rel="stylesheet">
@@ -90,58 +92,21 @@
 					  </form>
 					<br></br><br></br>
 					<div class="row">
-					
+
 					  <a class="btn btn-lg button-new col-xs-5 col-md-3 col-md-offset-6" href="loadgame.html">Back</a>
-					
-					
+
+
 					  <a class="btn btn-lg button-new col-xs-5 col-xs-offset-2 col-md-3 col-md-offset-6" href="index.html">Main Menu</a>
-					
+
 					</div>
 				     </div>
 				  </div>';
 		}
 		else{
-		  echo '
-			<link href= "https://fonts.googleapis.com/css?family=Ubuntu" rel="stylesheet">
-			<div class = "container-fluid">
-			   <div class = "well outter-well">
-		              <h1 class = "text-center ubuntu-font" style="font-size:50px"><strong>Startup Parameters</strong></h1>
-	  		      <div class = "gameParams" style = "margin-left: 10px">
-			         <div class = "form-group text-left" style = "width: 200px">
-			            <label class = "ubuntu-font" style = "font-size: 20px">Game length:</label>
-	        	            <input type = "text" class = "form-control" id = "timespan" placeholder = "Game length (days)">
-	      		         </div>
-
-			         <div class="checkbox">
-			            <label class = "ubuntu-font" style = "font-size: 20px"><strong>
-			                <input type="checkbox" value="">Day trading restricted</strong>
-			            </label>
-	      		         </div>
-
-	      		         <div class = "form-group text-left" style = "width: 200px">
-	        	            <label class = "ubuntu-font" style = "font-size: 20px">Stock limit:</label>
-	        	            <input type = "text" class = "form-control" id = "stocklimit" placeholder = "100">
-	      		         </div>
-
-			         <label class = "ubuntu-font" style = "font-size: 20px">Starting cash amount:</label>
-
-			         <div class = "input-group" style = "width: 200px">
-				    <span class = "input-group-addon" id = startingcash>$</span>
-	        		    <input type = "text" class = "form-control" id = "startingcash" placeholder = "0.00">
-	      		         </div>
-	  		      </div>
-		              <br><br/>
-		  	      <div class = "row">
-		    	         <div class = "col-xs-4 col-md-3">
-		      	            <a class="btn-lg button-new ubuntu-font"  href="index.html">Back to Main Menu</a>
-		    	         </div>
-		 	         <div class = "col-xs-4 col-xs-offset-4 col-md-offset-6 col-md-3">
-		     	            <a class="btn-lg button-new ubuntu-font"  href="addFriends.html">Confirm</a>
-		  	         </div>
-		 	      </div>
-			   </div>	
-			</div>';
+		 header("Location: startParams.php");
+		 exit(0);
 		}
 	}
 ?>
+
 </body>
