@@ -56,7 +56,7 @@
 							$nextDate = $date->format('Y-m-d');
 							mysqli_query($mysqli, "INSERT INTO session_list(email_GM, session_name, start_date, end_date,
 							allow_DT, stock_limit, start_cash) VALUES ('$email', '$gameName', '$currDate', '$nextDate', '$dayTrading', $stockLimit, $startingCash)");
-							mysqli_query($mysqli, "INSERT INTO `session_player_data`(`email_GM`, `session_name`, `email_INV`, `total_score`) VALUES ('$email', '$session', '$email', 0)");
+							mysqli_query($mysqli, "INSERT INTO `session_player_data`(`email_GM`, `session_name`, `email_INV`, `total_score`) VALUES ('$email', '$gameName', '$email', 0)");
 							header("Location: addFriends.html");
 				 		 	exit(0);
 						}

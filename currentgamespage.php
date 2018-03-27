@@ -1,4 +1,4 @@
-<<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -36,7 +36,7 @@
       	session_start();
       	$email = $_SESSION['email'];
       	$connection = mysqli_connect("localhost", "fsledcxs", "@rka54yM9&0i", "fsledcxs_main");
-      	$sql = mysqli_query($connection, "SELECT session_name FROM `session_player_data` WHERE email_INV = '$email'");
+      	$sql = mysqli_query($connection, "SELECT `session_name` FROM `session_player_data` WHERE email_INV = '$email'");
       	while ($row = $sql->fetch_assoc()){
       ?>
       <br>

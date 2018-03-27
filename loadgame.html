@@ -26,23 +26,25 @@
         </br></br>
         </p>
       </div>
-      <form>
+      <form method="post" action="currentgames.php">
         <div class="form-group row">
           <div class="col-xs-8 col-md-6">
-            <label for="enteremail" class="ubuntu-font"> Email address</label>
-            <input type="email" class="form-control ubuntu-font" id="enteremail" placeholder="example@email-address.com">
+            <label for="enteremail" class="ubuntu-font"> Email address and password</label>
+            <input type="email" class="form-control ubuntu-font" id="enteremail" placeholder="example@email-address.com" name="email">
+            <input type="password" class="form-control ubuntu-font" id="enterpassword" placeholder="password" name="password">
+            <input type="submit" class="btn button-new ubuntu-font">
           </div>
         </div>
-        <br><br></br></br>
+     </form>
+        <br><br>
+        <h1 class="text ubuntu-font" style="font-size:15px;"> Click <a href="addaccount.php">here</a> to create an account.</h1>
+        </br></br>
         <div class="row">
 	  <div class="col-xs-4 col-md-6">
 	    <a class="btn button-new ubuntu-font" href="index.html">Main Menu</a>
 	  </div>
-          <div class="col-xs-4 col-md-6">
-            <a class="btn button-new ubuntu-font" href="currentgames.html">Submit</a>
-          </div>
         </div>
-      </form>
+      
     </br></br></br></br></br>
     </div>
  </div>
