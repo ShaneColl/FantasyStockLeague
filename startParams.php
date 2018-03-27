@@ -19,7 +19,7 @@
 	<link href= "https://fonts.googleapis.com/css?family=Ubuntu" rel="stylesheet">
 	<div class = "container-fluid">
 		<div class = "well outter-well">
-			<form action = "" method = "get">
+			<form action = "" method = "post">
 				<h1 class = "text-center ubuntu-font" style="font-size:50px"><strong>Startup Parameters</strong></h1>
 				<br><br/>
 				<?php
@@ -28,14 +28,14 @@
 					if (mysqli_connect_errno()){
 						echo "Failed to connect to MySQL: " . mysqli_connect_error();
 					}
-					if(isset($_GET["gameName"], $_GET["timespan"], $_GET["stockLimit"], $_GET["startingCash"])){
-						$gameName = $_GET["gameName"];
-						$timespan = $_GET["timespan"];
-						$dayTrading = (isset($_GET["dayTrading"]))? "TRUE" : "FALSE";
-						$stockLimit = $_GET["stockLimit"];
-						$startingCash = $_GET["startingCash"];
+					if(!empty($_POST["gameName"]) && !empty($_POST["timespan"]) && !empty($_POST["stockLimit"]) && !empty($_POST["startingCash"])){
+						$gameName = $_POST["gameName"];
+						$timespan = $_POST["timespan"];
+						$dayTrading = (isset($_POST["dayTrading"]))? "TRUE" : "FALSE";
+						$stockLimit = $_POST["stockLimit"];
+						$startingCash = $_POST["startingCash"];
 						$email = $_SESSION['email'];
-
+						
 						$validGameName = FALSE;
 						$currentGames = array();
 						$i = 0;
@@ -47,6 +47,8 @@
 							echo '<p class = "text-center ubuntu-font" style = "color: red">Game name is taken: Please try again</p>';
 						}
 						else{
+							$_SESSION['email'] = $email;
+							$_SESSION['gameName'] = $gameName;
 
 							$date = new DateTime(date('Y-m-d'));
 							$date->modify('+' . $timespan . ' day');
@@ -54,6 +56,7 @@
 							$nextDate = $date->format('Y-m-d');
 							mysqli_query($mysqli, "INSERT INTO session_list(email_GM, session_name, start_date, end_date,
 							allow_DT, stock_limit, start_cash) VALUES ('$email', '$gameName', '$currDate', '$nextDate', '$dayTrading', $stockLimit, $startingCash)");
+							mysqli_query($mysqli, "INSERT INTO `session_player_data`(`email_GM`, `session_name`, `email_INV`, `total_score`) VALUES ('$email', '$session', '$email', 0)");
 							header("Location: addFriends.html");
 				 		 	exit(0);
 						}
@@ -89,7 +92,7 @@
 
 						<div class = "input-group">
 							<span class = "input-group-addon" id = startingcash>$</span>
-							<input type = "number" step = "0.01" class = "form-control" id = "startingcash" name = "startingCash" placeholder = "0.00">
+							<input type = "number" step = "0.01" value = "" class = "form-control" id = "startingcash" name = "startingCash" placeholder = "0.00">
 						</div>
 					</div>
 				</div>
