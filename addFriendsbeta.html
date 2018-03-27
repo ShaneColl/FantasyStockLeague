@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang = "en">
+
+<head>
+	<meta charset="UTF-8">
+
+   	<title>Fantasy Stock League</title>
+
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+
+  	<link rel='stylesheet prefetch' href='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css'>
+
+	<link rel="stylesheet" href="css/style.css">
+
+</head>
+
+<body>     
+  <link href="https://fonts.googleapis.com/css?family=Ubuntu" rel="stylesheet">
+  <div class="container-fluid">
+	  <div class="well outter-well">
+			<div class = "row">				
+				<h1 class = "ubuntu-font text-center"><strong>Invite Friends</strong></h1>				
+			</div>						
+			<br></br><br></br>	
+			<form class="form-horizontal" method="post" action="addFriendsHelp.php">			
+				<div class="form-group">															<label for="addFriend" class="col-xs-offset-1 col-xs-2 col-lg-offset-2  control-label">Email Address:</label>	
+					<div class="col-xs-8 col-lg-6">				
+						<input type = "email" class = "form-control" placeholder="Recipient Email" id = "addFriend" name = "friendEmail">
+					</div>
+				</div>
+				<div class="form-group">
+					<button class="btn button-new ubuntu-font col-xs-offset-1 col-xs-2 col-lg-offset-3 col-lg-3" type="submit" id = "addButton">Send</button>
+				</div>
+			</form>			
+							
+			<br></br>					
+			<div class = "row">
+				<div class="col-xs-8 col-sm-6 col-sm-offset-6 col-md-4 col-md-offset-8">
+					<a class="btn btn-lg button-new ubuntu-font" href="index.html">Finish (Return to main menu)</a>
+				</div>
+			</div>
+	   </div>
+   </div>
+</body>
+</html>
