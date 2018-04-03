@@ -47,7 +47,14 @@
 				</div>
 			</div>
 		</div>
-
+		<?php 
+		
+		session_start(); 
+		
+		$session_name = $_SESSION['session_name'];
+		$email = $_SESSION['email'];
+		
+		?>
 
 		<script>
 		function test(q) {
@@ -91,9 +98,9 @@
 			   {
 			   echo "Failed to connect to MySQL: " . mysqli_connect_error();
 			   }
-			 $player_Email = "fakeemail@email.com";
-			 $GM_Email = "ddd@test.com";
-			 $session_name = "tester_game";
+			 $player_Email = $email;
+			 $GM_Email = $email;
+			 $session_name = $session_name;
 			 $querystring = "SELECT * FROM session_data WHERE owner = '" . $player_Email . "' and email_GM = '" . $GM_Email . "' and session_name = '" . $session_name . "'";
 			 $result = $mysqli->query($querystring);
 			 if (!$result) {
@@ -131,7 +138,7 @@
 						}
 					}
 					if (total_number > 0){
-						var finalObj = {company: outsideCompany, price: outsideObj.price, number: total_number}; 
+						var finalObj = {company: outsideCompany, price: outsideObj.price, number: total_number};
 						PopulateTable(finalObj);
 						companyList.push(outsideCompany);
 					}
@@ -231,7 +238,7 @@
 				var total_value = $(this).children().children('#total_value').text();
 				var amount = $(this).children().children('#amount').val();
 				var total_amount = $(this).children().children('#total_amount').text();
-				if ((parseInt(amount) > 0 || parseInt(amount) < 0) && (parseInt(total_amount)+parseInt(amount)) >= 0){ 
+				if ((parseInt(amount) > 0 || parseInt(amount) < 0) && (parseInt(total_amount)+parseInt(amount)) >= 0){
 					$.ajax({
 					  type: 'POST',
 					  url: 'buy_sell_dbInsert.php',
@@ -261,56 +268,79 @@
 		</script>
 
 
-
-
-		<!-- //Live updating
+		//Live updating
 		<script>
 
-		    var previous = null;
-		    var current = null;
+
+			function updateTable(row, price, symbol) {
+				var table = $('#main_table').DataTable();
+				var data = table.data().toArray();
+
+				price = (price).toFixed(2);
+
+				var currentPrice = "$" + price;
+				table.cell(row, 2).data('<p id="value">'+ currentPrice +'</p>');
+
+				var tabl = $('#main_table')
+				var tRow = tabl.children('tbody');
+
+
+				tRow.children().each(function () {
+					console.log("here");
+					var symbol2 = $(this).children().children('#stock_ticker').text();
+					if(symbol === symbol2) {
+						//console.log("symbols same");
+						console.log("symbol: " + symbol +"price: " + price);
+						var amount = parseInt($(this).children().children('#amount').val());
+						var total_amount = parseInt($(this).children().children('#total_amount').text());
+                                                console.log("total amount: " + total_amount);
+					        var val = (amount + total_amount) * parseFloat(price);
+						val = (val).toFixed(2);
+						val = "$" + val;
+						$(this).children().children('#total_value').text(val);
+					}
+
+				});
+
+			}
+
+
+			function callApi(data, row) {
+				$.getJSON("https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol="+ $(data[i][1]).text() +"&interval=1min&apikey=57FPBKMUD9NS4AAH", function(json) {
+
+					//Making sure the correct Json file is received
+					if(json.hasOwnProperty('Meta Data')) {
+						var metaData = json["Meta Data"];
+						var metaDataObject = Object.keys(metaData);
+						var symbol = metaData[metaDataObject[1]];
+						var priceTimeSeries = json["Time Series (1min)"];
+						var priceTimeSeriesObject = Object.keys(priceTimeSeries);
+						//Sets price equal to the most recent closing price.
+						var price = parseFloat(priceTimeSeries[priceTimeSeriesObject[0]]["4. close"]);
+
+						updateTable(row, price, symbol)
+					}
+					  });
+
+			}
+
 		    setInterval(function() {
-
-
-
+					console.log("running?");
 					var table = $('#main_table').DataTable();
 					var data = table.data().toArray();
 					var tableRows = Object.keys(data).length;
 					for( i = 0; i < tableRows; i++) {
-		        $.getJSON("https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol="+ $(data[i][1]).text() +"&interval=1min&apikey=57FPBKMUD9NS4AAH", function(json) {
+		       callApi(data, i);
+		      }
 
-		          //Making sure the correct Json file is received
-		          if(json.hasOwnProperty('Meta Data')) {
-		            var metaData = json["Meta Data"];
-		            var metaDataObject = Object.keys(metaData);
-		            var symbol = metaData[metaDataObject[1]];
-		            console.log("Symbol: " + symbol);
+		    }, 60000);//Every 60 seconds
 
-		            var priceTimeSeries = json["Time Series (1min)"];
-		            var priceTimeSeriesObject = Object.keys(priceTimeSeries);
-		            //Sets price equal to the most recent closing price.
-		            var price = parseFloat(priceTimeSeries[priceTimeSeriesObject[0]]["4. close"]);
-		            console.log(price);
+		    </script>
 
 
 
-
-
-
-		            // current = JSON.stringify(json);
-		            // console.log(current);
-		            // console.log("running");
-		            // if (previous && current && previous !== current) {
-		            //     console.log('refresh');
-		            //     location.reload();
-		            // }
-		            // previous = current;
-		          }
-
-		        });
-		    }, 2000);//Every 3 seconds
-
-		    </script> -->
 
 
 
 </body>
+
