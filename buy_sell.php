@@ -6,6 +6,14 @@
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
 		<link rel='stylesheet prefetch' href='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css'>
 		<link rel="stylesheet" href="css/style.css">
+			<style>
+			.alignleft {
+				float: left;
+			}
+			.alignright {
+				float: right;
+			}
+			</style>
 		<script
 		 src="https://code.jquery.com/jquery-3.3.1.js"
 		 integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60="
@@ -16,11 +24,18 @@
 	</head>
 	<body>
 		<link href= "https://fonts.googleapis.com/css?family=Ubuntu" rel="stylesheet">
+		<h1 id = "player_name" class = "text-center" style="font-size:40px;"><strong>Player: </strong></h1>
+		<h1 id = "game_name" class = "text-center" style="font-size:40px;"><strong>Game Name: </strong></h1>
+		<h1 id = "gm_name" class = "text-center" style="font-size:40px;"><strong>GM_Name: </strong></h1>
 		<div class = "container-fluid">
 			<div class = "well outter-well" id="num1">
-				<h1 class = "text-center" style="font-size:50px;"><strong>Buy/Sell Table</strong></h1>
+				<h1 class = "text-center" style="font-size:40px;"><strong>Buy/Sell Table</strong></h1>
 			<form id="searchForm" action="search" method="post">
-				Search Company:<br>
+				 <div id="info">
+					<div class="alignleft">Search Company: </div>
+					<div class="alignright">Total Money:</div>
+				 </div>
+				 <br></br>
 				<input type="text" placeholder="Company Ticker" class="get_searchsearch" onkeydown="get_search(this)" />
 			</form>
 				<div class = "well well-sm" id="num2">
@@ -53,6 +68,7 @@
 		
 		$session_name = $_SESSION['session_name'];
 		$email = $_SESSION['email'];
+		$GM_Email = $_SESSION['GM_email'];
 		
 		?>
 
@@ -82,12 +98,7 @@
 				}
 		});
 		}
-		</script>
 
-
-
-
-		<script>
 		var table_rows = [];
 		$(document).ready( function () {
 			$('#main_table').DataTable();
@@ -98,10 +109,7 @@
 			   {
 			   echo "Failed to connect to MySQL: " . mysqli_connect_error();
 			   }
-			 $player_Email = $email;
-			 $GM_Email = $email;
-			 $session_name = $session_name;
-			 $querystring = "SELECT * FROM session_data WHERE owner = '" . $player_Email . "' and email_GM = '" . $GM_Email . "' and session_name = '" . $session_name . "'";
+			 $querystring = "SELECT * FROM session_data WHERE owner = '" . $email . "' and email_GM = '" . $GM_Email . "' and session_name = '" . $session_name . "'";
 			 $result = $mysqli->query($querystring);
 			 if (!$result) {
 			 	echo 'Could not run query: ' . mysqli_error();
@@ -115,8 +123,26 @@
 			 	table_rows.push(entry);
 			 	<?php
 			 }
+			 $querystring = "SELECT * FROM session_player_data WHERE email_INV = '" . $email . "' and email_GM = '" . $GM_Email . "' and session_name = '" . $session_name . "'";
+			 $result = $mysqli->query($querystring);
+			 if (!$result) {
+			 	echo 'Could not run query: ' . mysqli_error();
+			 }
+			 ?>
+			 var player_cash = -1;
+			 <?php
+			 while( $row = mysqli_fetch_assoc($result)) {
+				?>
+			 	player_cash = "<?php echo $row['total_score'] ?>";
+			 	<?php
+			 }
 			 mysqli_close($mysqli);
 			 ?>
+			 $('#player_name').text("Player: "+"<?php echo $email;?>");
+			 $('#game_name').text("Game Name: "+"<?php echo $session_name;?>");
+			 $('#gm_name').text("Gm Name: "+"<?php echo $GM_Email;?>");
+			 $('#info').children(".alignright").text("Total Money: "+player_cash);
+			 
 			 var arrayLength = table_rows.length;
 			 var companyList = [];
 			 for (var i = 0; i < arrayLength; i++) {
@@ -268,7 +294,6 @@
 		</script>
 
 
-		//Live updating
 		<script>
 
 
@@ -333,7 +358,7 @@
 		       callApi(data, i);
 		      }
 
-		    }, 60000);//Every 60 seconds
+		    }, 30000);//Every 60 seconds
 
 		    </script>
 
