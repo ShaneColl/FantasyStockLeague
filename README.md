@@ -1,2 +1,2 @@
 # FantasyStockLeague
-Project for CEN3031
+http://fsleague.website
